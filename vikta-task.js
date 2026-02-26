@@ -319,6 +319,60 @@ function _defaultModels(provider) {
   return { generation: "gpt-4.1", chat: "gpt-4o-mini", translate: "gpt-4o-mini" };
 }
 
+const _MODEL_OPTIONS = {
+  openai: {
+    generation: [
+      { value: "gpt-4.1",      label: "GPT-4.1 (recommandé)" },
+      { value: "gpt-4o",       label: "GPT-4o" },
+      { value: "gpt-4o-mini",  label: "GPT-4o mini (économique)" },
+    ],
+    chat: [
+      { value: "gpt-4o-mini",  label: "GPT-4o mini (recommandé)" },
+      { value: "gpt-4o",       label: "GPT-4o" },
+      { value: "gpt-4.1",      label: "GPT-4.1" },
+    ],
+    translate: [
+      { value: "gpt-4o-mini",  label: "GPT-4o mini (recommandé)" },
+      { value: "gpt-4o",       label: "GPT-4o" },
+    ],
+  },
+  anthropic: {
+    generation: [
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6 (recommandé)" },
+      { value: "claude-opus-4-6",            label: "Claude Opus 4.6 (le plus puissant)" },
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (économique)" },
+    ],
+    chat: [
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (recommandé)" },
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6" },
+    ],
+    translate: [
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (recommandé)" },
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6" },
+    ],
+  },
+};
+
+function _populateModelSelects(provider, savedModels) {
+  var opts = _MODEL_OPTIONS[provider] || _MODEL_OPTIONS.openai;
+  ["generation", "chat", "translate"].forEach(function(type) {
+    var id = "model" + type.charAt(0).toUpperCase() + type.slice(1);
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    var cur = (savedModels && savedModels[type]) || sel.value;
+    sel.innerHTML = "";
+    (opts[type] || []).forEach(function(o) {
+      var opt = document.createElement("option");
+      opt.value = o.value;
+      opt.textContent = o.label;
+      sel.appendChild(opt);
+    });
+    if (cur && Array.from(sel.options).some(function(o) { return o.value === cur; })) {
+      sel.value = cur;
+    }
+  });
+}
+
 /* ---------- Cost tracking ---------- */
 let _sessionCost = 0;
 const _PRICING = {
@@ -409,7 +463,6 @@ function openAiSettings() {
   const cfg = getAiCfg();
   const mode = cfg.mode || "direct";
   const provider = cfg.provider || "openai";
-  const def = _defaultModels(provider);
   $("#modal").classList.add("open");
   document.querySelectorAll('input[name="aimode"]').forEach(function(r) { r.checked = r.value === mode; });
   document.querySelectorAll('input[name="aiprovider"]').forEach(function(r) { r.checked = r.value === provider; });
@@ -418,9 +471,7 @@ function openAiSettings() {
   $("#proxyUrl").value = cfg.proxyUrl || "";
   $("#apiKey").value = cfg.apiKey || cfg.openaiKey || "";
   $("#apiBase").value = cfg.apiBase || "";
-  $("#modelGeneration").value = cfg.models && cfg.models.generation ? cfg.models.generation : def.generation;
-  $("#modelChat").value = cfg.models && cfg.models.chat ? cfg.models.chat : def.chat;
-  $("#modelTranslate").value = cfg.models && cfg.models.translate ? cfg.models.translate : def.translate;
+  _populateModelSelects(provider, cfg.models);
 }
 function saveAiSettings() {
   const mode = document.querySelector('input[name="aimode"]:checked') ? document.querySelector('input[name="aimode"]:checked').value : "direct";
@@ -433,9 +484,9 @@ function saveAiSettings() {
     apiKey: $("#apiKey").value.trim(),
     apiBase: $("#apiBase").value.trim(),
     models: {
-      generation: $("#modelGeneration").value.trim() || def.generation,
-      chat: $("#modelChat").value.trim() || def.chat,
-      translate: $("#modelTranslate").value.trim() || def.translate,
+      generation: ($("#modelGeneration").value || def.generation),
+      chat: ($("#modelChat").value || def.chat),
+      translate: ($("#modelTranslate").value || def.translate),
     },
   };
   setAiCfg(cfg);
@@ -2200,17 +2251,7 @@ document.querySelectorAll('input[name="aimode"]').forEach((r) => {
 });
 document.querySelectorAll('input[name="aiprovider"]').forEach((r) => {
   r.addEventListener("change", (e) => {
-    const provider = e.target.value;
-    const def = _defaultModels(provider);
-    const genEl = $("#modelGeneration");
-    const chatEl = $("#modelChat");
-    const trEl = $("#modelTranslate");
-    if (genEl && !genEl.value) genEl.value = def.generation;
-    if (chatEl && !chatEl.value) chatEl.value = def.chat;
-    if (trEl && !trEl.value) trEl.value = def.translate;
-    if (genEl) genEl.placeholder = def.generation;
-    if (chatEl) chatEl.placeholder = def.chat;
-    if (trEl) trEl.placeholder = def.translate;
+    _populateModelSelects(e.target.value, null);
   });
 });
 

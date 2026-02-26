@@ -678,6 +678,24 @@ input:focus {
 }
 
 /* Modale */
+/* Modal selects */
+.modal-body select.vikta-select {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg2, #fff);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  appearance: auto;
+}
+.modal-body select.vikta-select:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(63,160,255,.18);
+}
+
 /* Cost badge */
 #costDisplay {
   display: none;

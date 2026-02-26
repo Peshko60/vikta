@@ -92,6 +92,14 @@
           </div>
         </div>
 
+        <div class="row">
+          <label>Fournisseur</label>
+          <div class="inline">
+            <label><input type="radio" name="aiprovider" value="openai"> OpenAI (ChatGPT)</label>
+            <label><input type="radio" name="aiprovider" value="anthropic"> Anthropic (Claude)</label>
+          </div>
+        </div>
+
         <div id="proxyFields" class="row" style="display:none;">
           <label for="proxyUrl">URL du proxy (POST)</label>
           <input id="proxyUrl" placeholder="http://localhost:3000/vikta-ai" />
@@ -99,32 +107,27 @@
         </div>
 
         <div id="directFields" class="row" style="display:none;">
-          <label>Fournisseur</label>
-          <div class="inline">
-            <label><input type="radio" name="aiprovider" value="openai"> OpenAI (ChatGPT)</label>
-            <label><input type="radio" name="aiprovider" value="anthropic"> Anthropic (Claude)</label>
-          </div>
-          <label for="apiKey" style="margin-top:8px;">Clé API</label>
+          <label for="apiKey">Clé API</label>
           <input id="apiKey" placeholder="sk-...  ou  sk-ant-..." />
           <label for="apiBase" style="margin-top:8px;">API Base (optionnel)</label>
           <input id="apiBase" placeholder="https://api.openai.com" />
           <div class="small">⚠️ La clé est stockée en local dans ton navigateur (localStorage).</div>
         </div>
 
-        <div class="row" style="margin-top:12px;">
+        <div class="row" style="margin-top:4px;">
           <label>Modèles</label>
           <div class="inline">
             <div class="row" style="flex:1;min-width:180px">
               <label for="modelGeneration">Génération</label>
-              <input id="modelGeneration" placeholder="gpt-4.1" />
+              <select id="modelGeneration" class="vikta-select"></select>
             </div>
             <div class="row" style="flex:1;min-width:180px">
               <label for="modelChat">Chat</label>
-              <input id="modelChat" placeholder="gpt-4o-mini" />
+              <select id="modelChat" class="vikta-select"></select>
             </div>
             <div class="row" style="flex:1;min-width:180px">
               <label for="modelTranslate">Traduction</label>
-              <input id="modelTranslate" placeholder="gpt-4o-mini" />
+              <select id="modelTranslate" class="vikta-select"></select>
             </div>
           </div>
         </div>
