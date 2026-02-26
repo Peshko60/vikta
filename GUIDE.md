@@ -3,15 +3,16 @@
 ## Sommaire
 1. [Installation du Proxy VIKTA (Mac)](#1-installation-du-proxy-vikta-mac)
 2. [Installation du Proxy VIKTA (Windows)](#2-installation-du-proxy-vikta-windows)
-3. [Configurer l'IA](#3-configurer-lia)
-4. [Concept général de l'outil](#4-concept-général-de-loutil)
-5. [Préparer une tâche](#5-préparer-une-tâche)
-6. [Gérer les écrans](#6-gérer-les-écrans)
-7. [Générer un écran avec l'IA](#7-générer-un-écran-avec-lia)
-8. [Discuter avec l'IA](#8-discuter-avec-lia)
-9. [Éditer le HTML manuellement](#9-éditer-le-html-manuellement)
-10. [Exporter son travail](#10-exporter-son-travail)
-11. [Problèmes fréquents](#11-problèmes-fréquents)
+3. [Préparer les fichiers VIKTA](#3-préparer-les-fichiers-vikta)
+4. [Configurer l'IA](#4-configurer-lia)
+5. [Concept général de l'outil](#5-concept-général-de-loutil)
+6. [Préparer une tâche](#6-préparer-une-tâche)
+7. [Gérer les écrans](#7-gérer-les-écrans)
+8. [Générer un écran avec l'IA](#8-générer-un-écran-avec-lia)
+9. [Discuter avec l'IA](#9-discuter-avec-lia)
+10. [Éditer le HTML manuellement](#10-éditer-le-html-manuellement)
+11. [Exporter son travail](#11-exporter-son-travail)
+12. [Problèmes fréquents](#12-problèmes-fréquents)
 
 ---
 
@@ -67,7 +68,32 @@ Le Proxy VIKTA est une petite application qui tourne en arrière-plan sur ton PC
 
 ---
 
-## 3. Configurer l'IA
+## 3. Préparer les fichiers VIKTA
+
+L'outil VIKTA est constitué de **trois fichiers indissociables** qui doivent impérativement se trouver dans le **même dossier** :
+
+| Fichier | Rôle |
+|---------|------|
+| `VIKTA.html` | L'outil principal — c'est ce fichier que tu ouvres dans le navigateur |
+| `vikta-task.css` | Les styles graphiques — sans lui l'interface est cassée |
+| `vikta-task.js` | Toute la logique de l'outil — sans lui rien ne fonctionne |
+
+### Comment obtenir ces fichiers
+
+Demande-les à ton référent technique. Place les trois fichiers dans un dossier sur ton Mac ou PC, par exemple :
+- Mac : `Documents/VIKTA/`
+- Windows : `C:\Tempo\VIKTA\`
+
+### Ouvrir l'outil
+
+- **Mac** : double-clique sur `VIKTA.html` → s'ouvre dans Safari, ou fais glisser le fichier dans Chrome
+- **Windows** : double-clique sur `VIKTA.html` → s'ouvre dans le navigateur par défaut
+
+> N'utilise jamais un lien distant ou une URL partagée — l'outil doit être ouvert depuis ton disque local pour fonctionner correctement.
+
+---
+
+## 4. Configurer l'IA
 
 ### Dans Proxy VIKTA (une seule fois)
 
@@ -91,7 +117,7 @@ Le Proxy VIKTA est une petite application qui tourne en arrière-plan sur ton PC
 
 ---
 
-## 4. Concept général de l'outil
+## 5. Concept général de l'outil
 
 VIKTA est un **outil de maquettage fonctionnel assisté par IA**. Il permet de :
 
@@ -110,7 +136,7 @@ L'IA génère du HTML fonctionnel fidèle aux conventions VIKTA — pas un rendu
 
 ---
 
-## 5. Préparer une tâche
+## 6. Préparer une tâche
 
 ### Nom de la tâche
 
@@ -137,7 +163,7 @@ Au premier lancement, l'outil propose de choisir un **dossier de travail**. Ce d
 
 ---
 
-## 6. Gérer les écrans
+## 7. Gérer les écrans
 
 ### Ajouter un écran
 
@@ -165,7 +191,7 @@ Le bouton **Supprimer** (en bas de chaque écran) demande confirmation avant de 
 
 ---
 
-## 7. Générer un écran avec l'IA
+## 8. Générer un écran avec l'IA
 
 C'est la fonctionnalité principale de VIKTA.
 
@@ -203,7 +229,7 @@ Clique à nouveau sur **Générer avec l'IA**.
 
 ---
 
-## 8. Discuter avec l'IA
+## 9. Discuter avec l'IA
 
 Le bouton **💬 Discuter** ouvre un chat lié à l'écran en cours.
 
@@ -225,7 +251,7 @@ Tu peux également **joindre des fichiers ou images** dans le chat (même métho
 
 ---
 
-## 9. Éditer le HTML manuellement
+## 10. Éditer le HTML manuellement
 
 Si tu veux corriger un détail sans relancer l'IA :
 
@@ -238,7 +264,7 @@ Si tu veux corriger un détail sans relancer l'IA :
 
 ---
 
-## 10. Exporter son travail
+## 11. Exporter son travail
 
 ### Sauvegarder la session (pour continuer plus tard)
 
@@ -263,7 +289,7 @@ Idéal pour partager une démo avec un stakeholder.
 
 ---
 
-## 11. Problèmes fréquents
+## 12. Problèmes fréquents
 
 **Le Proxy VIKTA ne s'ouvre pas au premier lancement**
 → Utilise clic droit → Ouvrir (voir section 1)
