@@ -1,0 +1,6 @@
+# Task files (specific to each PO's project)
+*-mockup.html
+*.lnk
+
+# Claude Code
+CLAUDE.md

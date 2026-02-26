@@ -1,0 +1,1927 @@
+:root {
+  /* Fond général de la page (bleu très clair) */
+  --bg: #f9fafe;
+
+  /* Panneaux / cartes / tableaux */
+  --panel: #ffffff;
+
+  /* Texte principal (titres, contenu) */
+  --ink: #263854;
+
+  /* Texte secondaire / labels / aides */
+  --muted: #9ca5b2;
+
+  /* Bordures, séparateurs */
+  --line: #d8e8ff;
+
+  /* Couleur principale (boutons, icônes, accents) */
+  --brand: #25a0ba;
+
+  /* Avertissements */
+  --warn: #f59e0b;
+
+  /* Erreurs */
+  --danger: #fb7896;
+
+  /* Layout */
+  --titlebar-h: 64px;
+  --gap: 12px;
+}
+
+/* Reset / base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.screen.editing-html .frame {
+  opacity: 0.2;
+}
+
+.screen .html-source {
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #223043;
+  background: #050811;
+  color: #e8edf2;
+  padding: 10px;
+  font-size: 12px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 14px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+
+  /* --- Marges de page pour les écrans générés --- */
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Titlebar */
+.titlebar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  min-height: var(--titlebar-h);
+}
+
+.titlebar h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* Boutons */
+.btn {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  padding: 9px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+}
+
+.btn:active:not([disabled]) {
+  transform: translateY(1px);
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Bouton principal type VIKTA (Ajouter un écran, etc.) */
+.btn.brand {
+  background: #19a6bc;
+  border-color: #14879a;
+  color: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Survol : un peu plus clair, toujours texte blanc */
+.btn.brand:hover:not([disabled]),
+.btn.brand:focus-visible:not([disabled]) {
+  background: #1db7cf;
+  border-color: #14879a;
+  color: #ffffff;
+  filter: none;
+}
+
+/* Assure que le texte reste blanc au survol/focus */
+.btn.brand,
+.btn.brand:hover,
+.btn.brand:focus {
+  color: #ffffff;
+}
+
+.btn.brand:hover:not([disabled]) {
+  filter: brightness(1.05);
+}
+
+/* Bouton danger (Supprimer) style VIKTA */
+.btn.warn {
+  background: #ff5082;
+  border-color: #d63a68;
+  color: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn.warn:hover:not([disabled]),
+.btn.warn:focus-visible:not([disabled]) {
+  background: #ff6a97;
+  border-color: #d63a68;
+  color: #ffffff;
+}
+
+/* Bouton danger (vider) style VIKTA */
+.btn.danger {
+  background: #ff5082;
+  border-color: #d63a68;
+  color: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn.danger:hover:not([disabled]),
+.btn.danger:focus-visible:not([disabled]) {
+  background: #ff6a97;
+  border-color: #d63a68;
+  color: #ffffff;
+}
+
+/* Barre d’actions sous le prompt (tous les boutons sur une seule ligne) */
+.prompt-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.prompt-actions::-webkit-scrollbar {
+  height: 6px;
+}
+.prompt-actions::-webkit-scrollbar-thumb {
+  background: #d1d9e6;
+  border-radius: 10px;
+}
+
+/* Layout divers */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+/* Row générique (app) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Card principale */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+/* Collapsible */
+.card.collapsible.sticky {
+  position: relative;
+}
+
+.collapsible-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  background: #f6f9ff;
+}
+
+.collapsible-title {
+  font-weight: 700;
+}
+
+/* Chevrons (pli / dépli) */
+.chevron {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  transform: rotate(0deg);
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.chevron::before {
+  content: "▾";
+}
+
+.chevron:hover {
+  background: #ecf4ff;
+  color: var(--ink);
+}
+
+/* Affichage plié / déplié basé sur aria-expanded */
+.card.collapsible[aria-expanded="false"] .collapsible-body,
+.screen.collapsible[aria-expanded="false"] .collapsible-body {
+  display: none;
+}
+
+.card.collapsible[aria-expanded="false"] .chevron,
+.screen.collapsible[aria-expanded="false"] .chevron {
+  transform: rotate(-90deg);
+}
+
+.collapsible-body {
+  padding: 14px 16px 16px;
+}
+
+/* Form / inputs */
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  padding: 12px;
+  outline: none;
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(37, 160, 186, 0.2);
+}
+
+/* Hints / erreurs */
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hint.error,
+.error {
+  color: var(--danger);
+}
+
+.invalid {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px rgba(251, 120, 150, 0.2) !important;
+}
+
+/* RTE (éditeur riche) */
+.rte-wrap {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.rte-toolbar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px;
+  background: #f6f9ff;
+  border-bottom: 1px solid var(--line);
+}
+
+.rte-toolbar .btn {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.rte {
+  min-height: 140px;
+  padding: 12px;
+  outline: none;
+  color: var(--ink);
+}
+
+.rte[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+}
+
+/* Liste d’écrans */
+.screens {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.screen {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.screen.dragging {
+  opacity: 0.7;
+  outline: 2px dashed var(--brand);
+}
+
+/* Header d’un écran */
+.screen-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: #f6f9ff;
+}
+
+.screen-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.screen-num {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.screen-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Actions à droite du header d’écran */
+.screen-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Drag handle */
+.drag-handle {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: grab;
+  user-select: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Aperçu / frame */
+.frame {
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+/* Zone éléments (toolbar + frame + textarea HTML) */
+.elements {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Barre d’actions HTML sous Discussion / Prompt IA */
+.elements-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 6px 0 4px;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+.elements-toolbar::-webkit-scrollbar {
+  height: 6px;
+}
+.elements-toolbar::-webkit-scrollbar-thumb {
+  background: #d1d9e6;
+  border-radius: 10px;
+}
+
+.inline-inc {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Mode focus-preview : on ne garde que l’aperçu */
+.screen.focus-preview .explication,
+.screen.focus-preview .chat {
+  display: none;
+}
+
+.screen.focus-preview .elements {
+  margin-top: 0;
+}
+
+/* Bandeau info focus (créé dynamiquement en JS) */
+.focus-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: auto;
+  gap: 4px;
+}
+
+.focus-info .label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Chat */
+.chat {
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chat-head .title {
+  font-weight: 700;
+}
+
+.chat-body {
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.chat-message {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.chat-message.assistant {
+  background: #f6f9ff;
+}
+
+.chat-message.user {
+  background: #ecf9fb;
+}
+
+.chat-message .role {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--line);
+}
+
+.chat-input textarea {
+  min-height: 70px;
+  resize: vertical;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  padding: 12px;
+  outline: none;
+}
+
+.chat-input textarea::placeholder {
+  color: var(--muted);
+}
+
+.chat-input textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(37, 160, 186, 0.2);
+}
+
+/* Chat: images / fichiers */
+.chat-images,
+.chat-files {
+  display: none;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Vignettes d’images */
+.chat-thumb {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #ffffff;
+}
+
+.chat-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.chat-thumb button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Fichiers */
+.chat-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #f6f9ff;
+  font-size: 12px;
+}
+
+.chat-file .name {
+  font-weight: 500;
+}
+
+.chat-file .meta {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.chat-file button {
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Modale */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-card {
+  width: min(700px, 92vw);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.modal-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-body {
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.modal-actions {
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Gate (écran de garde / infos) */
+.gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+}
+
+.gate-card {
+  width: min(560px, 92vw);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  padding: 18px;
+}
+
+.gate-card h2 {
+  margin: 0 0 10px;
+}
+
+.gate-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* --- Prévisualisation VIKTA dans l'iframe (formulaires / popups) --- */
+
+/* Si le contenu principal est une popup ou un container VIKTA, on le centre */
+body > .ui-dialog,
+body > .app-data-container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 1100px;
+}
+
+/* Dialogues */
+.ui-dialog {
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+
+  /* centrer et limiter la largeur de la popup dans l'iframe */
+  margin: 24px auto;
+  max-width: 980px;
+  box-sizing: border-box;
+}
+
+.ui-dialog-titlebar {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--panel);
+}
+
+.ui-dialog-content {
+  padding: 16px;
+}
+
+/* Contenu interne de la popup (formulaire + tableau) */
+.app-dialog.ui-dialog-content {
+  padding: 16px 24px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Grille simple type Bootstrap (SCOPÉE à la popup pour éviter conflit avec .row global) */
+.app-dialog .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -8px;
+  margin-right: -8px;
+  gap: 0; /* évite double-espacement avec la version globale */
+}
+
+.app-dialog .col-5,
+.app-dialog .col-7 {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.app-dialog .col-5 { flex: 0 0 41.6667%; max-width: 41.6667%; }
+.app-dialog .col-7 { flex: 0 0 58.3333%; max-width: 58.3333%; }
+
+.app-dialog .right {
+  text-align: right;
+}
+
+/* Formulaires */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group .control-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+/* Boutons façon VIKTA dans les popups */
+.btn-primary {
+  background: #19a6bc;
+  border-color: #14879a;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+/* Champ date plus étroit dans les popups générées */
+.app-dialog input[type="date"],
+.app-dialog input[type="date"].form-control {
+  max-width: 220px;
+}
+
+/* Ligne de boutons dans les popups générées : Annuler à gauche, Valider à droite */
+.app-dialog .row.mt-4 {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.app-dialog .row.mt-4 .col-5,
+.app-dialog .row.mt-4 .col-7 {
+  flex: 0 0 auto;
+  max-width: none;
+}
+
+.app-dialog .row.mt-4 .col-5 { text-align: left; }
+.app-dialog .row.mt-4 .col-7 { text-align: right; }
+
+.app-dialog .row.mt-4 .btn {
+  min-width: 110px;
+}
+
+.app-dialog .row.mt-4 .col-5 {
+  margin-right: 12px;
+}
+
+/* TABLEAU STYLE VIKTA */
+table.dataTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+/* Wrapper éventuel (si DataTables ajoute un container) */
+.dataTables_wrapper {
+  margin-top: 8px;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Header */
+table.dataTable thead tr {
+  background: #f5f9ff;
+}
+
+table.dataTable thead th {
+  background: #f5f9fc;
+  color: #1e3d58;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-bottom: 1px solid #d7e2ea;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+  color: #2b3e5a;
+}
+
+/* Lignes */
+table.dataTable tbody tr {
+  border-bottom: 1px solid #eef3f7;
+  height: 40px;
+}
+
+table.dataTable tbody tr:hover {
+  background: #f6fbff;
+}
+
+/* Cellules */
+table.dataTable td {
+  padding: 10px 12px;
+  color: #2e3e4e;
+  vertical-align: top;
+}
+
+/* Colonnes numériques */
+table.dataTable td.text-right,
+table.dataTable td.numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Première colonne (titulaire / associé) plus forte */
+table.dataTable tbody td:first-child {
+  font-weight: 600;
+}
+
+/* Texte secondaire sous le nom (si tu ajoutes une span.secondary) */
+table.dataTable tbody td:first-child .secondary {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Ligne TOTAL (si applicable) */
+#capital-table tfoot td {
+  background: #e8f5fb;
+  font-weight: 600;
+  border-top: 2px solid #b8d7e5;
+}
+
+/* --- Tableau de répartition du capital (#capital-table) --- */
+#capital-table {
+  margin-top: 8px;
+  table-layout: fixed;
+  width: 100%;
+}
+
+#capital-table thead th {
+  background: #f0f6ff;
+  border-bottom: 2px solid #e0ecf7;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Colonnes numériques : titres alignés à droite comme les valeurs */
+#capital-table thead th:nth-child(3),
+#capital-table thead th:nth-child(4),
+#capital-table thead th:nth-child(5) {
+  text-align: right;
+}
+
+/* Colonne Associé (nom mis en avant) */
+#capital-table tbody td:nth-child(1) {
+  min-width: 160px;
+}
+
+/* Colonne Catégorie un peu plus calme */
+#capital-table tbody td:nth-child(2) {
+  color: var(--muted);
+}
+
+/* Colonnes PP / NP / U */
+#capital-table tbody td:nth-child(3),
+#capital-table tbody td:nth-child(4),
+#capital-table tbody td:nth-child(5) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Colonne Numéros */
+#capital-table tbody td:nth-child(6) {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #44566c;
+  white-space: pre-line;
+}
+
+#capital-table td .numero-block {
+  line-height: 1.4;
+  color: #44566c;
+  font-size: 13px;
+}
+
+/* Si tu utilises un tr de total avec une classe .total-row */
+#capital-table tbody tr.total-row td {
+  background: #e4f5fb;
+  font-weight: 600;
+  border-top: 2px solid #b8d7e5;
+}
+
+/* Largeurs cohérentes entre thead et tbody */
+#capital-table th:nth-child(1),
+#capital-table td:nth-child(1) {
+  width: 22%;
+}
+
+#capital-table th:nth-child(2),
+#capital-table td:nth-child(2) {
+  width: 18%;
+}
+
+#capital-table th:nth-child(3),
+#capital-table td:nth-child(3) {
+  width: 12%;
+}
+
+#capital-table th:nth-child(4),
+#capital-table td:nth-child(4) {
+  width: 12%;
+}
+
+#capital-table th:nth-child(5),
+#capital-table td:nth-child(5) {
+  width: 12%;
+}
+
+#capital-table th:nth-child(6),
+#capital-table td:nth-child(6) {
+  width: 24%;
+}
+
+/* -----------------------------------------------------
+   Alignement / cohérence avec le tableau final
+   ----------------------------------------------------- */
+
+#final-capital-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#final-capital-table_wrapper,
+#final-capital-table {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+table.dataTable,
+table.dataTable.table {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Largeurs strictement identiques entre les deux tableaux */
+#capital-table th:nth-child(1),
+#capital-table td:nth-child(1),
+#final-capital-table th:nth-child(1),
+#final-capital-table td:nth-child(1) {
+  width: 28%;
+}
+
+#capital-table th:nth-child(2),
+#capital-table td:nth-child(2),
+#final-capital-table th:nth-child(2),
+#final-capital-table td:nth-child(2) {
+  width: 12%;
+  text-align: right;
+}
+
+#capital-table th:nth-child(3),
+#capital-table td:nth-child(3),
+#final-capital-table th:nth-child(3),
+#final-capital-table td:nth-child(3) {
+  width: 12%;
+  text-align: right;
+}
+
+#capital-table th:nth-child(4),
+#capital-table td:nth-child(4),
+#final-capital-table th:nth-child(4),
+#final-capital-table td:nth-child(4) {
+  width: 12%;
+  text-align: right;
+}
+
+#capital-table th:nth-child(5),
+#capital-table td:nth-child(5),
+#final-capital-table th:nth-child(5),
+#final-capital-table td:nth-child(5) {
+  width: 36%;
+}
+
+/* Si DataTables met le tableau dans un "scroll body" */
+#final-capital-table_wrapper .dataTables_scroll,
+#final-capital-table_wrapper .dataTables_scrollHead,
+#final-capital-table_wrapper .dataTables_scrollBody {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Au cas où un wrapper bootstrap/table-responsive ajoute un retrait */
+#final-capital-table_wrapper .table-responsive {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* --- SELECT + BOUTON style VIKTA (comme ta vraie appli) --- */
+#add-capital-row-form-group .row.align-items-center{
+  display:flex;
+  align-items:center;
+  flex-wrap:nowrap;
+  gap:14px;                 /* espace entre select et bouton */
+  justify-content:flex-start; /* bouton collé au select */
+}
+
+/* On neutralise l'effet "col-10 / col-2" bootstrap pour éviter que ça pousse à droite */
+#add-capital-row-form-group .col-10,
+#add-capital-row-form-group .col-2{
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+}
+
+/* wrapper du select + chevron */
+#add-capital-row-form-group .controls-input-with-buttons{
+  position:relative;
+  width: 100%;          /* <- ta largeur */
+  max-width: 900px;    /* <- ta largeur max */
+  display:flex;
+  align-items:center;
+}
+
+/* Select en mode "ligne" + chevron custom */
+#add-capital-row-form-group select.viktaselect.custom-select{
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  background:transparent;
+  border:none;
+  border-bottom: 2px solid var(--line);
+  border-radius:0;
+  padding: 10px 34px 8px 0; /* place pour le chevron */
+  font-size: 18px;
+  font-weight: 500;
+  color: #9fb7ff; /* placeholder look */
+  outline:none;
+}
+
+/* focus propre */
+#add-capital-row-form-group select.viktaselect.custom-select:focus{
+  border-bottom-color: var(--brand);
+  box-shadow:none;
+}
+
+/* quand une valeur est choisie */
+#add-capital-row-form-group select.viktaselect.custom-select:valid{
+  color: var(--ink);
+}
+
+/* chevron turquoise */
+#add-capital-row-form-group .controls-input-with-buttons::after{
+  content:"";
+  position:absolute;
+  right:2px;
+  top:50%;
+  transform: translateY(-35%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid var(--brand);
+  pointer-events:none;
+}
+
+/* IE/Edge legacy (optionnel, mais ne gêne pas) */
+#add-capital-row-form-group select.viktaselect.custom-select::-ms-expand{
+  display:none;
+}
+
+/* Bouton + carré turquoise */
+#add-capital-row-form-group .controls-buttons{
+  display:flex;
+}
+
+#add-capital-row-form-group .controls-buttons .btn.btn-secondary{
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 6px;
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#add-capital-row-form-group .controls-buttons .btn.btn-secondary:hover{
+  filter: brightness(0.95);
+}
+
+/* === TRANSFER TYPE : même visu que add-capital (sans bouton) === */
+
+/* le parent sert de "wrapper" pour placer la flèche */
+#transfer-type-wrapper,
+select.transfer-type-select{
+position:relative;
+}
+
+/* cible le div qui contient le select (ton <div> autour) */
+div:has(> select.transfer-type-select){
+  position: relative;
+  display: inline-block; /* comme ton inline-block actuel */
+  max-width: 200px;      /* reprend ton style inline */
+  width: 200px;
+}
+
+/* applique le style viktaselect au select */
+select.viktaselect.custom-select.transfer-type-select{
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--line);
+  border-radius: 0;
+  padding: 10px 34px 8px 0;  /* place pour le chevron */
+  font-size: 18px;
+  font-weight: 500;
+  color: #9fb7ff;
+  outline: none;
+
+  /* IMPORTANT : on enlève le style inline qui peut gêner */
+  max-width: none !important;
+  display: block !important;
+}
+
+/* focus */
+select.viktaselect.custom-select.transfer-type-select:focus{
+  border-bottom-color: var(--brand);
+  box-shadow: none;
+}
+
+/* si tu mets required + option vide disabled, ça passe en var(--ink) quand choisi */
+select.viktaselect.custom-select.transfer-type-select:valid{
+  color: var(--ink);
+}
+
+/* chevron turquoise (sur le wrapper div) */
+div:has(> select.transfer-type-select)::after{
+  content:"";
+  position:absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-35%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid var(--brand);
+  pointer-events: none;
+}
+
+/* IE/Edge legacy (optionnel) */
+select.viktaselect.custom-select.transfer-type-select::-ms-expand{
+  display:none;
+}
+
+/* === EXTENSION : ADD-CEDANT / ADD-CESSIONNAIRE (même visu que add-capital) === */
+
+div:has(> select.add-cedant-select),
+div:has(> select.add-cessionnaire-select){
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 900px;
+}
+
+select.viktaselect.custom-select.add-cedant-select,
+select.viktaselect.custom-select.add-cessionnaire-select{
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  background:transparent;
+  border:none;
+  border-bottom: 2px solid var(--line);
+  border-radius:0;
+  padding: 10px 34px 8px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #9fb7ff;
+  outline:none;
+
+  max-width: none !important;
+  display: block !important;
+}
+
+select.viktaselect.custom-select.add-cedant-select:focus,
+select.viktaselect.custom-select.add-cessionnaire-select:focus{
+  border-bottom-color: var(--brand);
+  box-shadow:none;
+}
+
+select.viktaselect.custom-select.add-cedant-select:valid,
+select.viktaselect.custom-select.add-cessionnaire-select:valid{
+  color: var(--ink);
+}
+
+div:has(> select.add-cedant-select)::after,
+div:has(> select.add-cessionnaire-select)::after{
+  content:"";
+  position:absolute;
+  right:2px;
+  top:50%;
+  transform: translateY(-35%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid var(--brand);
+  pointer-events:none;
+}
+
+select.viktaselect.custom-select.add-cedant-select::-ms-expand,
+select.viktaselect.custom-select.add-cessionnaire-select::-ms-expand{
+  display:none;
+}
+
+/* === EXTENSION : bouton + cessionnaire dans transfers-list === */
+
+#transfers-list > div > div.transfer-content > div:nth-child(3) > div > div > div.col-2 > div > button{
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 6px;
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* hover identique */
+#transfers-list > div > div.transfer-content > div:nth-child(3) > div > div > div.col-2 > div > button:hover{
+  filter: brightness(0.95);
+}
+
+/* focus propre */
+#transfers-list > div > div.transfer-content > div:nth-child(3) > div > div > div.col-2 > div > button:focus{
+  box-shadow: none;
+  outline: none;
+}
+
+/* === VRAIE POPUP : Détail cession === */
+#detail-popup-container{
+  position: fixed;
+  inset: 0;                 /* top/right/bottom/left:0 */
+  z-index: 9999;
+  display: none;            /* tu gardes ton display:none */
+  background: rgba(0,0,0,.35);
+  padding: 24px;
+}
+
+/* quand ton JS met display:block -> on centre */
+#detail-popup-container[style*="display: block"]{
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* la boîte (ton "dialog") */
+#detail-popup-container .ui-dialog{
+  width: min(980px, 96vw);
+  max-height: 90vh;
+  overflow: auto;
+  margin: 0 !important;
+  border-radius: 12px;
+}
+
+/* optionnel : éviter que le fond scroll derrière */
+body:has(#detail-popup-container[style*="display: block"]){
+  overflow: hidden;
+}
+
+/* =====================================================================
+   FIX VIKTA – ajustements ciblés pour la maquette "Transfert de parts"
+   Objectifs:
+   - Grille type Bootstrap (col-*) + align-items-center pour les en-têtes
+   - Alignement cohérent des en-têtes/colonnes des tableaux (#capital-table,
+     #final-capital-table, tableaux Cédants/Cessionnaires)
+   NOTE: bloc ajouté en fin de fichier pour ne pas perturber le reste.
+   ===================================================================== */
+
+/* --- Mini-grille (pour le HTML de la maquette) --- */
+.row.align-items-center{
+  align-items: center;
+  gap: 0; /* évite que les "col-*" débordent à cause du gap global */
+}
+.row.align-items-center > [class^="col-"],
+.row.align-items-center > [class*=" col-"]{
+  padding-left: 8px;
+  padding-right: 8px;
+  min-width: 0;
+}
+
+.align-items-center{ align-items: center; }
+.right{
+  text-align: right;
+  margin-left: auto; /* utile quand la colonne doit se coller à droite */
+}
+
+/* Colonnes type Bootstrap (uniquement celles utilisées dans le HTML fourni) */
+.col-2{ flex: 0 0 16.6667%; max-width: 16.6667%; }
+.col-4{ flex: 0 0 33.3333%; max-width: 33.3333%; }
+.col-5{ flex: 0 0 41.6667%; max-width: 41.6667%; }
+.col-6{ flex: 0 0 50%; max-width: 50%; }
+.col-7{ flex: 0 0 58.3333%; max-width: 58.3333%; }
+.col-8{ flex: 0 0 66.6667%; max-width: 66.6667%; }
+.col-10{ flex: 0 0 83.3333%; max-width: 83.3333%; }
+
+/* Mobile: empilement simple */
+@media (max-width: 720px){
+  .col-2,.col-4,.col-5,.col-6,.col-7,.col-8,.col-10{
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  .row.align-items-center > [class^="col-"],
+  .row.align-items-center > [class*=" col-"]{
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* --- Tables: alignement des en-têtes/colonnes (la structure HTML = source de vérité) --- */
+
+/* Capital social actuel: colonnes = 1 Associé | 2 PP | 3 NP | 4 U | 5 Numéros | 6 Actions */
+#capital-table{
+  table-layout: fixed;
+}
+
+/* Largeurs cohérentes (thead/tbody) */
+#capital-table th:nth-child(1), #capital-table td:nth-child(1){ width: 28%; }
+#capital-table th:nth-child(2), #capital-table td:nth-child(2){ width: 10%; }
+#capital-table th:nth-child(3), #capital-table td:nth-child(3){ width: 10%; }
+#capital-table th:nth-child(4), #capital-table td:nth-child(4){ width: 10%; }
+#capital-table th:nth-child(5), #capital-table td:nth-child(5){ width: 34%; }
+#capital-table th:nth-child(6), #capital-table td:nth-child(6){ width: 8%; }
+
+/* Alignement des titres sur les colonnes numériques (corrige le décalage PP/NP/U) */
+#capital-table thead th:nth-child(2),
+#capital-table thead th:nth-child(3),
+#capital-table thead th:nth-child(4),
+#capital-table thead th:nth-child(5){
+  text-align: right;
+}
+#capital-table thead th:nth-child(6){
+  text-align: center;
+}
+
+/* Alignement de secours côté cellules (au cas où un input perdrait sa classe text-right) */
+#capital-table tbody td:nth-child(2),
+#capital-table tbody td:nth-child(3),
+#capital-table tbody td:nth-child(4){
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+#capital-table tbody td:nth-child(6){
+  text-align: center;
+}
+
+/* Inputs dans table: évite que le padding de td + input fasse “danser” les colonnes */
+#capital-table td .form-control{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tableau final: colonnes = 1 Associé | 2 PP | 3 NP | 4 U | 5 Numéros */
+#final-capital-table{
+  table-layout: fixed;
+}
+#final-capital-table th:nth-child(1), #final-capital-table td:nth-child(1){ width: 28%; }
+#final-capital-table th:nth-child(2), #final-capital-table td:nth-child(2){ width: 12%; }
+#final-capital-table th:nth-child(3), #final-capital-table td:nth-child(3){ width: 12%; }
+#final-capital-table th:nth-child(4), #final-capital-table td:nth-child(4){ width: 12%; }
+#final-capital-table th:nth-child(5), #final-capital-table td:nth-child(5){ width: 36%; }
+
+#final-capital-table thead th:nth-child(2),
+#final-capital-table thead th:nth-child(3),
+#final-capital-table thead th:nth-child(4),
+#final-capital-table thead th:nth-child(5){
+  text-align: right;
+}
+#final-capital-table tbody td:nth-child(2),
+#final-capital-table tbody td:nth-child(3),
+#final-capital-table tbody td:nth-child(4){
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Tables Cédants / Cessionnaires: titres “Prix/Valeur” alignés avec les valeurs --- */
+table.dataTable.cedants-table thead th:nth-child(3),
+table.dataTable.cessionnaires-table thead th:nth-child(3){
+  text-align: right;
+}
+
+/* Colonne Actions (toujours la dernière) centrée */
+table.dataTable.cedants-table thead th:last-child,
+table.dataTable.cessionnaires-table thead th:last-child,
+table.dataTable.cedants-table tbody td:last-child,
+table.dataTable.cessionnaires-table tbody td:last-child{
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Si le tableau Cessionnaires n'a que 3 colonnes (Donation/Succession/Apport),
+   la 3e = Actions → on force le centrage via last-child (override) */
+table.dataTable.cessionnaires-table thead th:last-child{
+  text-align: center;
+}
+
+/* Petites améliorations de lisibilité sur les en-têtes multi-colonnes */
+table.dataTable.cedants-table thead th,
+table.dataTable.cessionnaires-table thead th{
+  vertical-align: middle;
+}
+
+/* Boutons d'action dans les cellules: évite l'étirement */
+table.dataTable td .btn{
+  justify-content: center;
+}
+#final-capital-table thead th:first-child{
+  text-align: left !important;
+}
+#final-capital-table tbody td:first-child{
+  text-align: left !important;
+}
+
+/* (optionnel mais cohérent avec le 1er tableau) */
+#capital-table thead th:first-child,
+#capital-table tbody td:first-child{
+  text-align: left !important;
+}
+
+/* 4) Alignement Cédants / Cessionnaires : mêmes règles de layout */
+table[id^="cedants-table-"],
+table[id^="cessionnaires-table-"]{
+  width: 100%;
+  table-layout: fixed; /* aligne les colonnes d’un tableau à l’autre */
+}
+
+table[id^="cedants-table-"] th,
+table[id^="cedants-table-"] td,
+table[id^="cessionnaires-table-"] th,
+table[id^="cessionnaires-table-"] td{
+  vertical-align: middle;
+}
+
+table[id^="cedants-table-"] th:first-child,
+table[id^="cedants-table-"] td:first-child,
+table[id^="cessionnaires-table-"] th:first-child,
+table[id^="cessionnaires-table-"] td:first-child{
+  text-align: left;
+  width: 220px; /* base commune -> alignement visuel des 2 tableaux */
+}
+
+/* 5) Réduire largeur des selects "Ajouter un cédant / cessionnaire"
+      + coller le bouton + au select (comme "Ajouter un associé") */
+.add-cedant-select,
+.add-cessionnaire-select{
+  width: 320px;
+  max-width: 320px;
+}
+
+/* Ligne select + bouton (uniquement pour ces zones) */
+.add-cedant-select,
+.add-cessionnaire-select{
+  flex: 0 0 auto;
+}
+
+/* On cible la row align-items-center qui contient ces selects */
+.form-group:has(.add-cedant-select) .row.align-items-center,
+.form-group:has(.add-cessionnaire-select) .row.align-items-center{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;                 /* bouton collé */
+}
+
+/* Neutralise l'effet col-10/col-2 dans ces lignes uniquement */
+.form-group:has(.add-cedant-select) .col-10,
+.form-group:has(.add-cedant-select) .col-2,
+.form-group:has(.add-cessionnaire-select) .col-10,
+.form-group:has(.add-cessionnaire-select) .col-2{
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Collage visuel select + bouton + (rayons) */
+.form-group:has(.add-cessionnaire-select) .controls-input-with-buttons select{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.form-group:has(.add-cessionnaire-select) .controls-buttons .btn{
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
+}
+
+/* Si ton navigateur ne supporte pas :has(), fallback "soft" (ne casse rien) */
+@supports not selector(:has(*)){
+  /* fallback minimal : rapproche le + sans casser le layout */
+  .add-cessionnaire-select{
+    width: 320px;
+    max-width: 320px;
+  }
+  .add-cessionnaire-select + *{
+    margin-left: 0;
+  }
+}
+
+/* =========================================================
+   PATCH UI – Transfert parts sociales (basé sur le HTML fourni)
+   À COLLER EN FIN de vikta-task.css
+   ========================================================= */
+
+/* 1) Checkbox "Parts sociales numérotées" : moins à droite + label aligné */
+.col-6.right #checkbox-numbered-parts{
+  vertical-align: middle;
+}
+
+.col-6.right label[for="checkbox-numbered-parts"]{
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px 0 0 !important; /* remplace le margin-right inline */
+  line-height: 1;
+}
+
+/* on met le groupe en inline-flex (le HTML a un form-group inline ici) */
+.col-6.right .form-group[style*="display:inline"]{
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  margin-right: 24px; /* décale le bloc (checkbox+label) vers la gauche */
+}
+
+/* 2) Titres des tableaux en gras (h2/h4 visibles dans le HTML) */
+h2{ font-weight: 700; }
+h4{ font-weight: 700; }
+
+/* 3) Tableau "Répartition du capital après transferts" : 'Associé' à gauche */
+#final-capital-table thead th:first-child,
+#final-capital-table tbody td:first-child{
+  text-align: left !important;
+}
+
+/* (cohérence : capital-table aussi) */
+#capital-table thead th:first-child,
+#capital-table tbody td:first-child{
+  text-align: left !important;
+}
+
+/* 4) Alignement Cédants / Cessionnaires : même structure de colonnes */
+table[id^="cedants-table-"],
+table[id^="cessionnaires-table-"]{
+  width: 100%;
+  table-layout: fixed;      /* clé pour aligner visuellement */
+}
+
+table[id^="cedants-table-"] th,
+table[id^="cedants-table-"] td,
+table[id^="cessionnaires-table-"] th,
+table[id^="cessionnaires-table-"] td{
+  vertical-align: middle;
+}
+
+/* 1ère colonne (nom) identique */
+table[id^="cedants-table-"] th:first-child,
+table[id^="cedants-table-"] td:first-child,
+table[id^="cessionnaires-table-"] th:first-child,
+table[id^="cessionnaires-table-"] td:first-child{
+  width: 240px;
+  text-align: left;
+}
+
+/* dernière colonne (Actions 🗑️) identique */
+table[id^="cedants-table-"] th:last-child,
+table[id^="cedants-table-"] td:last-child,
+table[id^="cessionnaires-table-"] th:last-child,
+table[id^="cessionnaires-table-"] td:last-child{
+  width: 72px;
+  text-align: right;
+}
+
+/* 5) Réduire largeur des selects "Ajouter un cédant/cessionnaire" */
+select.add-cedant-select,
+select.add-cessionnaire-select{
+  width: 320px;
+  max-width: 100%;
+}
+
+/* Coller le bouton + au select (cessionnaire) comme "Ajouter un associé" */
+select.add-cessionnaire-select{
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Compense l'espace entre col-10 et col-2 (padding/gutter) sans toucher au layout global */
+.btn-add-cessionnaire{
+  margin-left: -12px; /* “colle” visuellement le + au select */
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* =========================================================
+   PATCH – Poubelles + boutons Supprimer (classes réelles du HTML)
+   ========================================================= */
+
+/* Poubelles (🗑️) -> rose */
+.btn.btn-secondary.btn-delete-capital-row,
+.btn.btn-secondary.btn-delete-cedant,
+.btn.btn-secondary.btn-delete-cessionnaire{
+  color: #ff5082 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 6px !important;
+  line-height: 1 !important;
+}
+
+.btn.btn-secondary.btn-delete-capital-row:hover,
+.btn.btn-secondary.btn-delete-cedant:hover,
+.btn.btn-secondary.btn-delete-cessionnaire:hover{
+  color: #ff5082 !important;
+  opacity: 0.9;
+}
+
+/* Bouton "Supprimer" d’un transfert -> accents rose (sans tout casser) */
+.btn.btn-secondary.btn-delete-transfer{
+  color: #ff5082 !important;
+  border-color: #ff5082 !important;
+  background: transparent !important;
+}
+
+.btn.btn-secondary.btn-delete-transfer:hover{
+  color: #ff5082 !important;
+  border-color: #ff5082 !important;
+  opacity: 0.9;
+}
+
+th.sortable { padding: 0; } /* pour que le bouton remplisse bien */
+th.sortable .th-sort {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+
+  padding: .75rem .75rem;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+th.sortable .th-sort:focus-visible {
+  outline: 2px solid #009688;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* icônes de tri “classiques” */
+th.sortable .sort-icon::before {
+  content: "↕";
+  opacity: .35;
+  font-size: 14px;
+}
+
+th.sortable[aria-sort="ascending"] .sort-icon::before {
+  content: "↑";
+  opacity: 1;
+}
+
+th.sortable[aria-sort="descending"] .sort-icon::before {
+  content: "↓";
+  opacity: 1;
+}
+
+/* =========================================================
+   ACTIONS TABLE distributions (icônes clean & standard)
+   ========================================================= */
+
+#main-datatable td .btn-action{
+  padding: 0 6px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+#main-datatable td .btn-action:hover{
+  background: #f6f9ff;
+  color: var(--ink);
+}
+
+#main-datatable td .btn-action:focus-visible{
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Icônes: même style partout */
+#main-datatable td .btn-action svg{
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Poubelle en "danger" doux */
+#main-datatable td .btn-delete{
+  color: var(--danger);
+}
+#main-datatable td .btn-delete:hover{
+  background: rgba(251,120,150,.12);
+}
+
+/* Cadenas en brand (optionnel) */
+#main-datatable td .btn-lock{
+  color: var(--brand);
+}
+#main-datatable td .btn-lock:hover{
+  background: rgba(37,160,186,.10);
+}
+
+.chat {
+  margin-bottom: 20px;
+}
+
+.chat-body {
+  background: #f5f7fa;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 250px;
+  overflow-y: auto;
+  font-size: 14px;
+  color: #1f2933;
+}
+
+.chat-message {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  user-select: text;
+}
+
+.chat-message.user {
+  background: #e6f0ff;
+  border-left: 4px solid #3fa0ff;
+}
+
+.chat-message.assistant {
+  background: #ffffff;
+  border-left: 4px solid #16a34a;
+}
+
+.screen-explication {
+  background: #f6f9ff;
+  border: 1px solid #d8e8ff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.screen-explication h3 {
+  margin-top: 0;
+}

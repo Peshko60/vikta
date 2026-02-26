@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Définition de tâche</title>
+  <link rel="stylesheet" href="vikta-task.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Titlebar sticky -->
+    <div class="titlebar">
+      <h1>Tâche VIKTA</h1>
+      <div class="spacer"></div>
+      <button class="btn" id="aiSettings">Paramètres IA</button>
+      <button class="btn" id="openTask">Ouvrir…</button>
+      <button class="btn" id="pickDefaultDir">Dossier de travail…</button>
+      <button class="btn" id="saveAsTask" disabled>Sauvegarder</button>
+      <button class="btn brand" id="exportMockup">
+          Exporter maquette autonome
+        </button>
+      <button class="btn" id="exportWorkspace" disabled>Exporter workspace pour JIRA (FR + EN)</button>
+    </div>
+
+    <!-- Bloc Tâche (collapsible + sticky) -->
+    <section class="card collapsible sticky" id="taskCard" aria-expanded="true">
+      <div class="collapsible-head">
+        <button class="chevron" id="toggleTask" aria-controls="taskBody" aria-expanded="true"
+          title="Plier / déplier"></button>
+        <div class="collapsible-title">Tâche</div>
+        <div class="spacer"></div>
+        <button class="btn brand" id="addScreenHeader">Ajouter un écran</button>
+      </div>
+      <div id="taskBody" class="collapsible-body">
+        <label for="taskName">Nom de la tâche</label>
+        <input id="taskName" placeholder="ex: WEB-Page-Inscription" aria-required="true" />
+        <div id="taskNameError" class="hint error" style="display:none;">⚠️ Le nom de la tâche est obligatoire.</div>
+
+        <label for="projectKey" style="margin-top:12px;">Clé projet (pour CSV)</label>
+        <input id="projectKey" placeholder="ex: WEB" />
+        <div class="hint">Ex. pour Jira : <code>WEB</code>, <code>APP</code>…</div>
+
+        <label style="margin-top:12px;">Définition de tâche</label>
+        <div class="rte-wrap" id="defWrap">
+          <div class="prompt-actions">
+            <button class="btn" data-cmd="bold"><b>B</b></button>
+            <button class="btn" data-cmd="italic"><i>I</i></button>
+            <button class="btn" data-cmd="formatBlock" data-value="H2">H2</button>
+            <button class="btn" data-cmd="insertUnorderedList">• Liste</button>
+            <button class="btn" data-cmd="insertOrderedList">1. Liste</button>
+            <button class="btn" data-cmd="removeFormat">Effacer</button>
+          </div>
+          <div id="definition" class="rte" contenteditable="true"
+            data-placeholder="Décris le contexte, le pourquoi, les hypothèses…"></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="screens" class="screens"></div>
+  </div>
+
+  <!-- Workspace Gate -->
+  <div class="gate" id="workspaceGate">
+    <div class="gate-card">
+      <h2>Choisis ton dossier de travail</h2>
+      <p>Chrome exige une action de ta part pour autoriser l’accès à un dossier. Ce dossier sera utilisé par
+        <b>Sauvegarder</b> pour ouvrir la boîte “Enregistrer sous…” directement au bon endroit.
+      </p>
+      <div class="gate-actions">
+        <button class="btn" id="gateSkip">Plus tard</button>
+        <button class="btn brand" id="gatePick">Choisir le dossier…</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal paramètres IA -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div style="font-weight:700">Paramètres IA</div>
+        <button class="btn" id="closeModal">Fermer</button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <label>Mode</label>
+          <div class="inline">
+            <label><input type="radio" name="aimode" value="proxy"> Proxy sécurisé (recommandé)</label>
+            <label><input type="radio" name="aimode" value="direct"> Direct OpenAI (clé stockée localement)</label>
+          </div>
+        </div>
+
+        <div id="proxyFields" class="row" style="display:none;">
+          <label for="proxyUrl">URL du proxy (POST)</label>
+          <input id="proxyUrl" placeholder="https://mon-proxy.exemple.com/translate-or-generate" />
+          <div class="small">Le proxy doit accepter des prompts JSON et renvoyer du texte/HTML.</div>
+        </div>
+
+        <div id="directFields" class="row" style="display:none;">
+          <label for="openaiKey">Clé API OpenAI</label>
+          <input id="openaiKey" placeholder="sk-..." />
+          <div class="inline">
+            <div class="row" style="flex:1;min-width:200px">
+              <label for="openaiModel">Modèle</label>
+              <input id="openaiModel" value="gpt-4o-mini" />
+            </div>
+            <div class="row" style="flex:1;min-width:200px">
+              <label for="apiBase">API Base (optionnel)</label>
+              <input id="apiBase" placeholder="https://api.openai.com" />
+            </div>
+          </div>
+          <div class="small">⚠️ La clé est stockée en local dans ton navigateur (localStorage).</div>
+        </div>
+
+        <div class="toolbar" style="justify-content:flex-end">
+          <button class="btn" id="clearAiCfg">Réinitialiser</button>
+          <button class="btn brand" id="saveAiCfg">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vikta-task.js"></script>
+</body>
+
+</html>
