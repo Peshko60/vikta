@@ -316,39 +316,49 @@ function _defaultModels(provider) {
   if (provider === "anthropic") {
     return { generation: "claude-sonnet-4-6", chat: "claude-haiku-4-5-20251001", translate: "claude-haiku-4-5-20251001" };
   }
-  return { generation: "gpt-4.1", chat: "gpt-4o-mini", translate: "gpt-4o-mini" };
+  return { generation: "gpt-5-mini", chat: "gpt-5-mini", translate: "gpt-5-mini" };
 }
 
 const _MODEL_OPTIONS = {
   openai: {
     generation: [
-      { value: "gpt-4.1",      label: "GPT-4.1 (recommandé)" },
-      { value: "gpt-4o",       label: "GPT-4o" },
-      { value: "gpt-4o-mini",  label: "GPT-4o mini (économique)" },
+      { value: "gpt-5.2",      label: "GPT-5.2 — $1.75/$14.00" },
+      { value: "gpt-5",        label: "GPT-5 — $1.25/$10.00" },
+      { value: "gpt-4.1",      label: "GPT-4.1 — $2.00/$8.00" },
+      { value: "gpt-4o",       label: "GPT-4o — $2.50/$10.00" },
+      { value: "gpt-5-mini",   label: "GPT-5 Mini — $0.25/$2.00 (recommandé)" },
+      { value: "gpt-4o-mini",  label: "GPT-4o Mini — $0.15/$0.60" },
+      { value: "gpt-4.1-nano", label: "GPT-4.1 Nano — $0.10/$0.40 (économique)" },
+      { value: "gpt-5-nano",   label: "GPT-5 Nano — $0.05/$0.40 (le moins cher)" },
     ],
     chat: [
-      { value: "gpt-4o-mini",  label: "GPT-4o mini (recommandé)" },
-      { value: "gpt-4o",       label: "GPT-4o" },
-      { value: "gpt-4.1",      label: "GPT-4.1" },
+      { value: "gpt-5-mini",   label: "GPT-5 Mini — $0.25/$2.00 (recommandé)" },
+      { value: "gpt-4o-mini",  label: "GPT-4o Mini — $0.15/$0.60" },
+      { value: "gpt-4.1-nano", label: "GPT-4.1 Nano — $0.10/$0.40" },
+      { value: "gpt-5-nano",   label: "GPT-5 Nano — $0.05/$0.40 (le moins cher)" },
+      { value: "gpt-5",        label: "GPT-5 — $1.25/$10.00" },
+      { value: "gpt-4.1",      label: "GPT-4.1 — $2.00/$8.00" },
     ],
     translate: [
-      { value: "gpt-4o-mini",  label: "GPT-4o mini (recommandé)" },
-      { value: "gpt-4o",       label: "GPT-4o" },
+      { value: "gpt-5-mini",   label: "GPT-5 Mini — $0.25/$2.00 (recommandé)" },
+      { value: "gpt-4o-mini",  label: "GPT-4o Mini — $0.15/$0.60" },
+      { value: "gpt-4.1-nano", label: "GPT-4.1 Nano — $0.10/$0.40" },
+      { value: "gpt-5-nano",   label: "GPT-5 Nano — $0.05/$0.40 (le moins cher)" },
     ],
   },
   anthropic: {
     generation: [
-      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6 (recommandé)" },
-      { value: "claude-opus-4-6",            label: "Claude Opus 4.6 (le plus puissant)" },
-      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (économique)" },
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6 — $3.00/$15.00 (recommandé)" },
+      { value: "claude-opus-4-6",            label: "Claude Opus 4.6 — $5.00/$25.00 (le plus puissant)" },
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 — $1.00/$5.00 (économique)" },
     ],
     chat: [
-      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (recommandé)" },
-      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6" },
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 — $1.00/$5.00 (recommandé)" },
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6 — $3.00/$15.00" },
     ],
     translate: [
-      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 (recommandé)" },
-      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6" },
+      { value: "claude-haiku-4-5-20251001",  label: "Claude Haiku 4.5 — $1.00/$5.00 (recommandé)" },
+      { value: "claude-sonnet-4-6",          label: "Claude Sonnet 4.6 — $3.00/$15.00" },
     ],
   },
 };
@@ -376,14 +386,26 @@ function _populateModelSelects(provider, savedModels) {
 /* ---------- Cost tracking ---------- */
 let _sessionCost = 0;
 const _PRICING = {
-  "gpt-4.1": [2, 8],
-  "gpt-4o": [2.5, 10],
-  "gpt-4o-mini": [0.15, 0.60],
+  // OpenAI — prix en $/MTok [input, output]
+  "gpt-5.2":       [1.75, 14.00],
+  "gpt-5.1":       [1.25, 10.00],
+  "gpt-5":         [1.25, 10.00],
+  "gpt-5-mini":    [0.25,  2.00],
+  "gpt-5-nano":    [0.05,  0.40],
+  "gpt-4.1":       [2.00,  8.00],
+  "gpt-4.1-nano":  [0.10,  0.40],
+  "gpt-4o":        [2.50, 10.00],
+  "gpt-4o-mini":   [0.15,  0.60],
   "gpt-4o-mini-2024-07-18": [0.15, 0.60],
-  "claude-opus-4-6": [15, 75],
-  "claude-sonnet-4-6": [3, 15],
-  "claude-haiku-4-5-20251001": [0.80, 4],
-  "claude-haiku-4-5": [0.80, 4],
+  "o3":            [2.00,  8.00],
+  // Anthropic — prix en $/MTok [input, output]
+  "claude-opus-4-6":           [5.00, 25.00],
+  "claude-opus-4-5":           [5.00, 25.00],
+  "claude-sonnet-4-6":         [3.00, 15.00],
+  "claude-sonnet-4-5":         [3.00, 15.00],
+  "claude-haiku-4-5-20251001": [1.00,  5.00],
+  "claude-haiku-4-5":          [1.00,  5.00],
+  "claude-haiku-3-5":          [0.80,  4.00],
 };
 function _addCost(inputTokens, outputTokens, model) {
   if (!inputTokens && !outputTokens) return;
