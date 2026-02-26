@@ -513,7 +513,7 @@ function saveAiSettings() {
   };
   setAiCfg(cfg);
   $("#modal").classList.remove("open");
-  toast("Paramètres IA enregistrés.");
+  location.reload();
 }
 function clearAiSettings() {
   setAiCfg({});
@@ -532,12 +532,12 @@ function canTranslate() {
 async function chatCompletion(userPrompt) {
   const cfg = getAiCfg();
   if ((cfg.mode || "direct") === "proxy") {
-    const def = _defaultModels("openai");
+    const def = _defaultModels(cfg.provider || "openai");
     const model = cfg.models && cfg.models.chat ? cfg.models.chat : def.chat;
     const res = await fetch(cfg.proxyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mode: "chat", prompt: userPrompt, model: model }),
+      body: JSON.stringify({ mode: "chat", prompt: userPrompt, model: model, provider: cfg.provider || "openai" }),
     });
     if (!res.ok) throw new Error("Proxy: " + res.status + " " + res.statusText);
     const data = await res.json();
