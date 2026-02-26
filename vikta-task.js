@@ -295,7 +295,15 @@ function makeDraggable(screenEl, handleEl) {
 const AI_CFG_KEY = "po_ai_cfg";
 function getAiCfg() {
   try {
-    return JSON.parse(localStorage.getItem(AI_CFG_KEY) || "{}");
+    const raw = JSON.parse(localStorage.getItem(AI_CFG_KEY) || "{}");
+    // migrate old single-key fields
+    if (!raw.apiKey && raw.openaiKey) raw.apiKey = raw.openaiKey;
+    if (!raw.models && raw.openaiModel) {
+      raw.models = { generation: raw.openaiModel, chat: raw.openaiModel, translate: raw.openaiModel };
+    }
+    if (!raw.models) raw.models = {};
+    if (!raw.provider) raw.provider = "openai";
+    return raw;
   } catch {
     return {};
   }
@@ -303,29 +311,132 @@ function getAiCfg() {
 function setAiCfg(cfg) {
   localStorage.setItem(AI_CFG_KEY, JSON.stringify(cfg || {}));
 }
+
+function _defaultModels(provider) {
+  if (provider === "anthropic") {
+    return { generation: "claude-sonnet-4-6", chat: "claude-haiku-4-5-20251001", translate: "claude-haiku-4-5-20251001" };
+  }
+  return { generation: "gpt-4.1", chat: "gpt-4o-mini", translate: "gpt-4o-mini" };
+}
+
+/* ---------- Cost tracking ---------- */
+let _sessionCost = 0;
+const _PRICING = {
+  "gpt-4.1": [2, 8],
+  "gpt-4o": [2.5, 10],
+  "gpt-4o-mini": [0.15, 0.60],
+  "gpt-4o-mini-2024-07-18": [0.15, 0.60],
+  "claude-opus-4-6": [15, 75],
+  "claude-sonnet-4-6": [3, 15],
+  "claude-haiku-4-5-20251001": [0.80, 4],
+  "claude-haiku-4-5": [0.80, 4],
+};
+function _addCost(inputTokens, outputTokens, model) {
+  if (!inputTokens && !outputTokens) return;
+  const [ri, ro] = _PRICING[model] || [2, 8];
+  _sessionCost += (inputTokens / 1e6) * ri + (outputTokens / 1e6) * ro;
+  const el = document.getElementById("costDisplay");
+  if (el) {
+    el.textContent = "$" + _sessionCost.toFixed(4);
+    el.style.display = "";
+  }
+}
+
+/* ---------- Unified direct AI call ---------- */
+async function _directAICall(cfg, taskType, system, userMessages, images) {
+  const provider = cfg.provider || "openai";
+  const models = cfg.models || {};
+  const def = _defaultModels(provider);
+  const model = models[taskType] || def[taskType];
+  images = images || [];
+
+  if (provider === "anthropic") {
+    const key = cfg.apiKey || cfg.openaiKey || "";
+    if (!key) throw new Error("Clé Anthropic manquante.");
+    const msgs = userMessages.map(function(m) {
+      return { role: m.role, content: Array.isArray(m.content) ? m.content : [{ type: "text", text: String(m.content) }] };
+    });
+    if (images.length > 0) {
+      const last = msgs[msgs.length - 1];
+      if (last && last.role === "user") {
+        for (var i = 0; i < images.length; i++) {
+          var url = images[i];
+          if (!url) continue;
+          var m2 = url.match(/^data:([^;]+);base64,(.+)$/);
+          if (m2) {
+            last.content.push({ type: "image", source: { type: "base64", media_type: m2[1], data: m2[2] } });
+          }
+        }
+      }
+    }
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({ model: model, max_tokens: 16000, system: system, messages: msgs })
+    });
+    if (!res.ok) { const t = await res.text(); throw new Error("Anthropic: " + res.status + " " + t); }
+    const data = await res.json();
+    if (data.usage) _addCost(data.usage.input_tokens, data.usage.output_tokens, model);
+    return data.content && data.content[0] ? data.content[0].text || "" : "";
+  } else {
+    const key = cfg.apiKey || cfg.openaiKey || "";
+    if (!key) throw new Error("Clé OpenAI manquante.");
+    const base = (cfg.apiBase || "https://api.openai.com").replace(/\/$/, "");
+    const oaiMsgs = [{ role: "system", content: system }].concat(userMessages);
+    if (images.length > 0) {
+      const last = oaiMsgs[oaiMsgs.length - 1];
+      if (last && last.role === "user") {
+        if (typeof last.content === "string") last.content = [{ type: "text", text: last.content }];
+        for (var j = 0; j < images.length; j++) {
+          if (!images[j]) continue;
+          last.content.push({ type: "image_url", image_url: { url: images[j] } });
+        }
+      }
+    }
+    const res = await fetch(base + "/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+      body: JSON.stringify({ model: model, temperature: 0.2, messages: oaiMsgs })
+    });
+    if (!res.ok) { const t = await res.text(); throw new Error("OpenAI: " + res.status + " " + t); }
+    const data = await res.json();
+    if (data.usage) _addCost(data.usage.prompt_tokens, data.usage.completion_tokens, model);
+    return data.choices && data.choices[0] ? data.choices[0].message.content || "" : "";
+  }
+}
+
 function openAiSettings() {
   const cfg = getAiCfg();
   const mode = cfg.mode || "direct";
+  const provider = cfg.provider || "openai";
+  const def = _defaultModels(provider);
   $("#modal").classList.add("open");
-  document
-    .querySelectorAll('input[name="aimode"]')
-    .forEach((r) => (r.checked = r.value === mode));
+  document.querySelectorAll('input[name="aimode"]').forEach(function(r) { r.checked = r.value === mode; });
+  document.querySelectorAll('input[name="aiprovider"]').forEach(function(r) { r.checked = r.value === provider; });
   $("#proxyFields").style.display = mode === "proxy" ? "" : "none";
   $("#directFields").style.display = mode === "direct" ? "" : "none";
   $("#proxyUrl").value = cfg.proxyUrl || "";
-  $("#openaiKey").value = cfg.openaiKey || "";
-  $("#openaiModel").value = cfg.openaiModel || "gpt-4o-mini";
+  $("#apiKey").value = cfg.apiKey || cfg.openaiKey || "";
   $("#apiBase").value = cfg.apiBase || "";
+  $("#modelGeneration").value = cfg.models && cfg.models.generation ? cfg.models.generation : def.generation;
+  $("#modelChat").value = cfg.models && cfg.models.chat ? cfg.models.chat : def.chat;
+  $("#modelTranslate").value = cfg.models && cfg.models.translate ? cfg.models.translate : def.translate;
 }
 function saveAiSettings() {
-  const mode =
-    document.querySelector('input[name="aimode"]:checked')?.value || "direct";
+  const mode = document.querySelector('input[name="aimode"]:checked') ? document.querySelector('input[name="aimode"]:checked').value : "direct";
+  const provider = document.querySelector('input[name="aiprovider"]:checked') ? document.querySelector('input[name="aiprovider"]:checked').value : "openai";
+  const def = _defaultModels(provider);
   const cfg = {
-    mode,
+    mode: mode,
+    provider: provider,
     proxyUrl: $("#proxyUrl").value.trim(),
-    openaiKey: $("#openaiKey").value.trim(),
-    openaiModel: $("#openaiModel").value.trim() || "gpt-4o-mini",
+    apiKey: $("#apiKey").value.trim(),
     apiBase: $("#apiBase").value.trim(),
+    models: {
+      generation: $("#modelGeneration").value.trim() || def.generation,
+      chat: $("#modelChat").value.trim() || def.chat,
+      translate: $("#modelTranslate").value.trim() || def.translate,
+    },
   };
   setAiCfg(cfg);
   $("#modal").classList.remove("open");
@@ -339,7 +450,7 @@ function clearAiSettings() {
 function canTranslate() {
   const cfg = getAiCfg();
   const mode = cfg.mode || "direct";
-  if (mode === "direct") return !!cfg.openaiKey;
+  if (mode === "direct") return !!(cfg.apiKey || cfg.openaiKey);
   if (mode === "proxy") return !!cfg.proxyUrl;
   return false;
 }
@@ -348,39 +459,22 @@ function canTranslate() {
 async function chatCompletion(userPrompt) {
   const cfg = getAiCfg();
   if ((cfg.mode || "direct") === "proxy") {
+    const def = _defaultModels("openai");
+    const model = cfg.models && cfg.models.chat ? cfg.models.chat : def.chat;
     const res = await fetch(cfg.proxyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: userPrompt }),
+      body: JSON.stringify({ mode: "chat", prompt: userPrompt, model: model }),
     });
     if (!res.ok) throw new Error("Proxy: " + res.status + " " + res.statusText);
     const data = await res.json();
+    if (data.usage) _addCost(data.usage.input_tokens || data.usage.prompt_tokens, data.usage.output_tokens || data.usage.completion_tokens, model);
     return data.html || data.text || data.content || "";
   } else {
-    const key = cfg.openaiKey;
-    if (!key) throw new Error("Clé OpenAI manquante.");
-    const base = cfg.apiBase || "https://api.openai.com";
-    const model = cfg.openaiModel || "gpt-4o-mini";
-    const res = await fetch(`${base.replace(/\/$/, "")}/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.2,
-        messages: [{ role: "user", content: userPrompt }],
-      }),
-    });
-    if (!res.ok) {
-      const t = await res.text();
-      throw new Error(
-        "OpenAI: " + res.status + " " + res.statusText + " — " + t,
-      );
-    }
-    const data = await res.json();
-    return data.choices?.[0]?.message?.content ?? "";
+    return await _directAICall(cfg, "chat",
+      "Tu es un assistant. Tu réponds uniquement par le résultat demandé, sans commentaire.",
+      [{ role: "user", content: userPrompt }]
+    );
   }
 }
 
@@ -394,8 +488,9 @@ async function chatTextOnly(userPrompt, screenId) {
     }
 
     const images = getScreenImages(document.getElementById(screenId)) || [];
-
     const files = getScreenFiles(document.getElementById(screenId)) || [];
+    const def = _defaultModels(cfg.provider || "openai");
+    const model = cfg.models && cfg.models.chat ? cfg.models.chat : def.chat;
 
     const res = await fetch(cfg.proxyUrl, {
       method: "POST",
@@ -405,6 +500,8 @@ async function chatTextOnly(userPrompt, screenId) {
         prompt: userPrompt,
         images,
         files,
+        model: model,
+        provider: cfg.provider || "openai",
         conversation: screenConversations[screenId] || [],
       }),
     });
@@ -414,37 +511,13 @@ async function chatTextOnly(userPrompt, screenId) {
     }
 
     const data = await res.json();
+    if (data.usage) _addCost(data.usage.input_tokens || data.usage.prompt_tokens, data.usage.output_tokens || data.usage.completion_tokens, model);
     return data.text || "";
   } else {
-    const key = cfg.openaiKey;
-    const base = cfg.apiBase || "https://api.openai.com";
-    const model = cfg.openaiModel || "gpt-4o-mini";
-
-    const res = await fetch(`${base}/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.2,
-        messages: [
-          {
-            role: "system",
-            content:
-              "Tu es un assistant. Tu réponds en texte simple. Pas de HTML.",
-          },
-          {
-            role: "user",
-            content: userPrompt,
-          },
-        ],
-      }),
-    });
-
-    const data = await res.json();
-    return data.choices?.[0]?.message?.content || "";
+    return await _directAICall(cfg, "chat",
+      "Tu es un assistant fonctionnel. Tu réponds en texte brut. Pas de HTML. Réponses courtes et utiles.",
+      [{ role: "user", content: userPrompt }]
+    );
   }
 }
 
@@ -699,11 +772,15 @@ Tu es un assistant qui génère des fichiers HTML complets et valides.
       filesPayload = arr;
     }
 
+    const def = _defaultModels(cfg.provider || "openai");
+    const model = cfg.models && cfg.models.generation ? cfg.models.generation : def.generation;
     const payload = {
-      mode: "generate", // ou "chat"
+      mode: "generate",
       prompt,
       images,
       files: filesPayload,
+      model: model,
+      provider: cfg.provider || "openai",
       conversation: [],
     };
 
@@ -722,6 +799,7 @@ Tu es un assistant qui génère des fichiers HTML complets et valides.
 
     const data = await res.json();
     let html = data.html || "";
+    if (data.usage) _addCost(data.usage.input_tokens || data.usage.prompt_tokens, data.usage.output_tokens || data.usage.completion_tokens, model);
 
     html = stripCodeFence(html);
     if (!html || !/<html[\s>]/i.test(html)) {
@@ -736,48 +814,17 @@ Tu es un assistant qui génère des fichiers HTML complets et valides.
 
     return { html, debugPrompt };
   } else {
-    // ----- Mode DIRECT : appel direct OpenAI -----
-    const key = cfg.openaiKey;
-    if (!key) throw new Error("Clé OpenAI manquante.");
-    const base = cfg.apiBase || "https://api.openai.com";
-    const model = cfg.openaiModel || "gpt-4o-mini";
-
-    const userContent = [{ type: "text", text: prompt }];
-    for (const url of images || []) {
-      if (!url) continue;
-      userContent.push({ type: "image_url", image_url: { url } });
-    }
-
-    const res = await fetch(`${base.replace(/\/$/, "")}/v1/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.2,
-        messages: [
-          { role: "system", content: sys },
-          { role: "user", content: userContent },
-        ],
-      }),
-    });
-
-    const data = await res.json();
-    let html = data.choices?.[0]?.message?.content || "";
+    // ----- Mode DIRECT -----
+    let html = await _directAICall(cfg, "generation", sys, [{ role: "user", content: prompt }], images || []);
     html = stripCodeFence(html);
     if (!html || !/<html[\s>]/i.test(html)) {
       throw new Error("La réponse de l'IA ne contient pas un HTML complet.");
     }
-
-    const debugPrompt = prompt; // en direct, pas de bloc docs rajouté côté serveur
-
     if (screenId) {
-      window.__viktaLastPromptByScreen[screenId] = debugPrompt;
+      if (!window.__viktaLastPromptByScreen) window.__viktaLastPromptByScreen = {};
+      window.__viktaLastPromptByScreen[screenId] = prompt;
     }
-
-    return { html, debugPrompt };
+    return { html, debugPrompt: prompt };
   }
 }
 
@@ -2151,6 +2198,21 @@ document.querySelectorAll('input[name="aimode"]').forEach((r) => {
     $("#directFields").style.display = v === "direct" ? "" : "none";
   });
 });
+document.querySelectorAll('input[name="aiprovider"]').forEach((r) => {
+  r.addEventListener("change", (e) => {
+    const provider = e.target.value;
+    const def = _defaultModels(provider);
+    const genEl = $("#modelGeneration");
+    const chatEl = $("#modelChat");
+    const trEl = $("#modelTranslate");
+    if (genEl && !genEl.value) genEl.value = def.generation;
+    if (chatEl && !chatEl.value) chatEl.value = def.chat;
+    if (trEl && !trEl.value) trEl.value = def.translate;
+    if (genEl) genEl.placeholder = def.generation;
+    if (chatEl) chatEl.placeholder = def.chat;
+    if (trEl) trEl.placeholder = def.translate;
+  });
+});
 
 /* Gate interactions */
 document.getElementById("gatePick").addEventListener("click", pickDefaultDir);
@@ -2209,36 +2271,29 @@ async function _translateText(cfg, text) {
   if (!text || !text.trim()) return text;
   const mode = cfg.mode || "direct";
   if (mode === "proxy") {
+    const def = _defaultModels(cfg.provider || "openai");
+    const model = cfg.models && cfg.models.translate ? cfg.models.translate : def.translate;
     const res = await fetch(cfg.proxyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         mode: "chat",
-        prompt: "Translate the following French text to English. Return ONLY the translated text, no explanations:\n\n" + text
+        prompt: "Translate the following French text to English. Return ONLY the translated text, no explanations:\n\n" + text,
+        model: model,
+        provider: cfg.provider || "openai",
       })
     });
     if (!res.ok) throw new Error("Proxy " + res.status);
     const data = await res.json();
+    if (data.usage) _addCost(data.usage.input_tokens || data.usage.prompt_tokens, data.usage.output_tokens || data.usage.completion_tokens, model);
     return data.text || text;
   } else {
-    const key = cfg.openaiKey;
-    if (!key) return text;
-    const base = (cfg.apiBase || "https://api.openai.com").replace(/\/$/, "");
-    const model = cfg.openaiModel || "gpt-4o-mini";
-    const res = await fetch(base + "/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
-      body: JSON.stringify({
-        model, temperature: 0.0,
-        messages: [
-          { role: "system", content: "You are a French-to-English translator. Translate only. No explanations." },
-          { role: "user", content: text }
-        ]
-      })
-    });
-    if (!res.ok) throw new Error("OpenAI " + res.status);
-    const data = await res.json();
-    return data.choices?.[0]?.message?.content?.trim() || text;
+    if (!(cfg.apiKey || cfg.openaiKey)) return text;
+    const result = await _directAICall(cfg, "translate",
+      "You are a French-to-English translator. Translate only. No explanations.",
+      [{ role: "user", content: text }]
+    );
+    return result.trim() || text;
   }
 }
 
@@ -2247,10 +2302,12 @@ async function _translateHtml(cfg, html) {
   const isFullDoc = /<html[\s>]/i.test(html);
   const mode = cfg.mode || "direct";
   if (mode === "proxy") {
+    const def = _defaultModels(cfg.provider || "openai");
+    const model = cfg.models && cfg.models.translate ? cfg.models.translate : def.translate;
     const res = await fetch(cfg.proxyUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mode: "translate", prompt: html })
+      body: JSON.stringify({ mode: "translate", prompt: html, model: model, provider: cfg.provider || "openai" })
     });
     if (!res.ok) {
       let details = "";
@@ -2258,6 +2315,7 @@ async function _translateHtml(cfg, html) {
       throw new Error("Proxy " + res.status + (details ? " — " + details : ""));
     }
     const data = await res.json();
+    if (data.usage) _addCost(data.usage.input_tokens || data.usage.prompt_tokens, data.usage.output_tokens || data.usage.completion_tokens, model);
     let result = stripCodeFence(data.html || "") || html;
     if (!isFullDoc && /<html[\s>]/i.test(result)) {
       const m = result.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
@@ -2265,24 +2323,9 @@ async function _translateHtml(cfg, html) {
     }
     return result || html;
   } else {
-    const key = cfg.openaiKey;
-    if (!key) return html;
-    const base = (cfg.apiBase || "https://api.openai.com").replace(/\/$/, "");
-    const model = cfg.openaiModel || "gpt-4o-mini";
-    const res = await fetch(base + "/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
-      body: JSON.stringify({
-        model, temperature: 0.0,
-        messages: [
-          { role: "system", content: "You are a French-to-English translator. Translate all visible French text in the HTML to English. Preserve ALL HTML structure, CSS classes, IDs, and JavaScript exactly. Return ONLY the translated HTML." },
-          { role: "user", content: html }
-        ]
-      })
-    });
-    if (!res.ok) throw new Error("OpenAI " + res.status);
-    const data = await res.json();
-    let result = stripCodeFence(data.choices?.[0]?.message?.content?.trim() || "") || html;
+    if (!(cfg.apiKey || cfg.openaiKey)) return html;
+    const sysTr = "You are a French-to-English translator working on HTML. Translate all visible French text to English. Preserve ALL HTML structure, CSS classes, IDs, and JavaScript exactly. Return ONLY the translated HTML.";
+    let result = stripCodeFence(await _directAICall(cfg, "translate", sysTr, [{ role: "user", content: html }])) || html;
     if (!isFullDoc && /<html[\s>]/i.test(result)) {
       const m = result.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
       if (m) result = m[1].trim();

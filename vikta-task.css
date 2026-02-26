@@ -678,6 +678,19 @@ input:focus {
 }
 
 /* Modale */
+/* Cost badge */
+#costDisplay {
+  display: none;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2, #8a9bb0);
+  background: var(--bg2, rgba(0,0,0,.08));
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
 .modal {
   position: fixed;
   inset: 0;

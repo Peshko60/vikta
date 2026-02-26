@@ -14,6 +14,7 @@
     <div class="titlebar">
       <h1>Tâche VIKTA</h1>
       <div class="spacer"></div>
+      <span id="costDisplay" title="Coût estimé de la session"></span>
       <button class="btn" id="aiSettings">Paramètres IA</button>
       <button class="btn" id="openTask">Ouvrir…</button>
       <button class="btn" id="pickDefaultDir">Dossier de travail…</button>
@@ -87,30 +88,45 @@
           <label>Mode</label>
           <div class="inline">
             <label><input type="radio" name="aimode" value="proxy"> Proxy sécurisé (recommandé)</label>
-            <label><input type="radio" name="aimode" value="direct"> Direct OpenAI (clé stockée localement)</label>
+            <label><input type="radio" name="aimode" value="direct"> Direct (clé stockée localement)</label>
           </div>
         </div>
 
         <div id="proxyFields" class="row" style="display:none;">
           <label for="proxyUrl">URL du proxy (POST)</label>
-          <input id="proxyUrl" placeholder="https://mon-proxy.exemple.com/translate-or-generate" />
-          <div class="small">Le proxy doit accepter des prompts JSON et renvoyer du texte/HTML.</div>
+          <input id="proxyUrl" placeholder="http://localhost:3000/vikta-ai" />
+          <div class="small">Le proxy accepte des prompts JSON et renvoie du texte/HTML.</div>
         </div>
 
         <div id="directFields" class="row" style="display:none;">
-          <label for="openaiKey">Clé API OpenAI</label>
-          <input id="openaiKey" placeholder="sk-..." />
+          <label>Fournisseur</label>
           <div class="inline">
-            <div class="row" style="flex:1;min-width:200px">
-              <label for="openaiModel">Modèle</label>
-              <input id="openaiModel" value="gpt-4o-mini" />
+            <label><input type="radio" name="aiprovider" value="openai"> OpenAI (ChatGPT)</label>
+            <label><input type="radio" name="aiprovider" value="anthropic"> Anthropic (Claude)</label>
+          </div>
+          <label for="apiKey" style="margin-top:8px;">Clé API</label>
+          <input id="apiKey" placeholder="sk-...  ou  sk-ant-..." />
+          <label for="apiBase" style="margin-top:8px;">API Base (optionnel)</label>
+          <input id="apiBase" placeholder="https://api.openai.com" />
+          <div class="small">⚠️ La clé est stockée en local dans ton navigateur (localStorage).</div>
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <label>Modèles</label>
+          <div class="inline">
+            <div class="row" style="flex:1;min-width:180px">
+              <label for="modelGeneration">Génération</label>
+              <input id="modelGeneration" placeholder="gpt-4.1" />
             </div>
-            <div class="row" style="flex:1;min-width:200px">
-              <label for="apiBase">API Base (optionnel)</label>
-              <input id="apiBase" placeholder="https://api.openai.com" />
+            <div class="row" style="flex:1;min-width:180px">
+              <label for="modelChat">Chat</label>
+              <input id="modelChat" placeholder="gpt-4o-mini" />
+            </div>
+            <div class="row" style="flex:1;min-width:180px">
+              <label for="modelTranslate">Traduction</label>
+              <input id="modelTranslate" placeholder="gpt-4o-mini" />
             </div>
           </div>
-          <div class="small">⚠️ La clé est stockée en local dans ton navigateur (localStorage).</div>
         </div>
 
         <div class="toolbar" style="justify-content:flex-end">
