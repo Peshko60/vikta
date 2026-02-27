@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:)",
+      "Bash(node:*)",
+      "Bash(cd:*)",
+      "WebFetch(domain:openai.com)",
+      "WebFetch(domain:www.anthropic.com)",
+      "WebSearch",
+      "WebFetch(domain:costgoat.com)",
+      "Bash(npm show:*)",
+      "WebFetch(domain:www.electronjs.org)",
+      "WebFetch(domain:www.electron.build)",
+      "Bash(echo python3 not found:*)",
+      "WebFetch(domain:brunoscheufler.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh run:*)"
+    ]
+  }
+}
